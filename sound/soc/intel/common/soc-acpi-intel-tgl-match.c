@@ -41,6 +41,13 @@ static const struct snd_soc_acpi_endpoint spk_r_endpoint = {
 	.group_id = 1,
 };
 
+static const struct snd_soc_acpi_endpoint single_aggregated_endpoint = {
+	.num = 0,
+	.aggregated = 1,
+	.group_position = 0,
+	.group_id = 1,	/* entries with the same group_id are aggregated */
+};
+
 static const struct snd_soc_acpi_endpoint rt712_endpoints[] = {
 	{
 		.num = 0,
@@ -400,6 +407,74 @@ static const struct snd_soc_acpi_link_adr tgl_712_only[] = {
 	{}
 };
 
+static const struct snd_soc_acpi_adr_device cs35l56_sdw_eight_1_4_adr[] = {
+	{
+		.adr = 0x00003001fa355601,
+		.num_endpoints = 1,
+		.endpoints = &single_aggregated_endpoint,
+		.name_prefix = "AMP1"
+	},
+	{
+		.adr = 0x00003101fa355601,
+		.num_endpoints = 1,
+		.endpoints = &single_aggregated_endpoint,
+		.name_prefix = "AMP2"
+	},
+	{
+		.adr = 0x00003201fa355601,
+		.num_endpoints = 1,
+		.endpoints = &single_aggregated_endpoint,
+		.name_prefix = "AMP3"
+	},
+	{
+		.adr = 0x00003301fa355601,
+		.num_endpoints = 1,
+		.endpoints = &single_aggregated_endpoint,
+		.name_prefix = "AMP4"
+	},
+};
+
+static const struct snd_soc_acpi_adr_device cs35l56_sdw_eight_5_8_adr[] = {
+	{
+		.adr = 0x00013401fa355601,
+		.num_endpoints = 1,
+		.endpoints = &single_aggregated_endpoint,
+		.name_prefix = "AMP5"
+	},
+	{
+		.adr = 0x00013501fa355601,
+		.num_endpoints = 1,
+		.endpoints = &single_aggregated_endpoint,
+		.name_prefix = "AMP6"
+	},
+	{
+		.adr = 0x00013601fa355601,
+		.num_endpoints = 1,
+		.endpoints = &single_aggregated_endpoint,
+		.name_prefix = "AMP7"
+	},
+	{
+		.adr = 0x00013701fa355601,
+		.num_endpoints = 1,
+		.endpoints = &single_aggregated_endpoint,
+		.name_prefix = "AMP8"
+	},
+};
+
+static const struct snd_soc_acpi_link_adr cs35l56_sdw_eight_c[] = {
+	{
+		.mask = BIT(0),
+		.num_adr = ARRAY_SIZE(cs35l56_sdw_eight_1_4_adr),
+		.adr_d = cs35l56_sdw_eight_1_4_adr,
+	},
+	{
+		.mask = BIT(1),
+		.num_adr = ARRAY_SIZE(cs35l56_sdw_eight_5_8_adr),
+		.adr_d = cs35l56_sdw_eight_5_8_adr,
+	},
+	{}
+};
+
 static const struct snd_soc_acpi_codecs tgl_max98373_amp = {
 	.num_codecs = 1,
 	.codecs = {"MX98373"}
@@ -553,6 +628,12 @@ struct snd_soc_acpi_mach snd_soc_acpi_intel_tgl_sdw_machines[] = {
 		.links = tgl_rvp_headset_only,
 		.drv_name = "sof_sdw",
 		.sof_tplg_filename = "sof-tgl-rt711.tplg",
+	},
+	{
+		.link_mask = BIT(0) | BIT(1),
+		.links = cs35l56_sdw_eight_c,
+		.drv_name = "sof_sdw",
+		.sof_tplg_filename = "sof-tgl-cs35l56-x8-sdw0-sdw1.tplg"
 	},
 	{},
 };
